@@ -57,7 +57,7 @@ try:
         args.filename = tempfile.mktemp(prefix='Audio', suffix='.wav', dir='Recordings/')
 
     # Make sure the file is opened before recording anything:
-    with sf.SoundFile("Recordings/audio.wav", mode='x', samplerate=args.samplerate,
+    with sf.SoundFile("Recordings/rec.wav", mode='x', samplerate=args.samplerate,
                       channels=args.channels, subtype=args.subtype) as file:
         with sd.InputStream(samplerate=args.samplerate, device=args.device,
                             channels=args.channels, callback=callback):

@@ -91,20 +91,30 @@ def emotion_test(filename):
 
 
 def cng_gender(gend):
-    if gend == "F":
-        gender_label.config(text="Female")
-    elif gend == "M":
+    if gend == "Male":
         gender_label.config(text="Male")
+    elif gend == "Female":
+        gender_label.config(text="Female")
     else:
-        gender_label.config("Undefined")
+        gender_label.config(text="Undefined")
 
 
 def gender_test(filename):
-    model_for_gender = pickle.load(open("result/Gender/mlp_classifier.model", "rb"))
+    # model_for_gender = pickle.load(open("result/Gender/mlp_classifier.model", "rb"))
+    # # extract features and reshape it
+    # features = extract_feature(filename, mfcc=True, chroma=True, mel=True).reshape(1, -1)
+    # # predict
+    # result = model_for_gender.predict(features)[0]
+
+    model_for_gender = pickle.load(open("result/Gender/mlp_classifier_1.model", "rb"))
     # extract features and reshape it
-    features = extract_feature(filename, mfcc=True, chroma=True, mel=True).reshape(1, -1)
-    # predict
-    result = model_for_gender.predict(features)[0]
+    features = None
+    frequency = get_frequencies(filename)
+    if len(frequency) >= 0:
+        nobs, mean, skew, kurtosis, median, mode, std, low, peak, q25, q75, iqr = get_features(frequency)
+        # predict
+        result = model_for_gender.predict([[nobs, mean, skew, kurtosis, median, mode, std, low, peak, q25, q75, iqr]])[0]
+    else: result = "Undefined"
     # show the result !
     print("result:", result)
     cng_gender(result)
@@ -118,7 +128,11 @@ def stop():
     if pid is not None:
         os.kill(pid, signal.SIGINT)
         pid = None
+    src = "Recordings/rec.wav"
     filename = "Recordings/audio.wav"
+    os.system(f"ffmpeg -i {src} -ac 1 -ar 16000 {filename}")
+    os.remove(src)
+    filename = "Recordings/3.wav"
     emotion_test(filename)
     gender_test(filename)
 
