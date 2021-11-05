@@ -120,4 +120,4 @@ print("Accuracy: {:.2f}%".format(accuracy*100))
 if not os.path.isdir("result"):
     os.mkdir("result")
 
-pickle.dump(model, open("result/Gender/mlp_classifier.model", "wb"))
+pickle.dump(model, open("result/Gender/mlp_classifier(ds_file).model", "wb"))
