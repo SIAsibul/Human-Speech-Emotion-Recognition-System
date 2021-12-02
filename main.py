@@ -9,6 +9,7 @@ import subprocess
 import numpy  # Make sure NumPy is loaded before it is used in the callback
 assert numpy  # avoid "imported but unused" message (W0611)
 from helper import *
+from pydub import AudioSegment, effects
 
 root = tk.Tk()
 root.title("Speech Emotion Recognition")
@@ -91,9 +92,9 @@ def emotion_test(filename):
 
 
 def cng_gender(gend):
-    if gend == "Male":
+    if gend == "M":
         gender_label.config(text="Male")
-    elif gend == "Female":
+    elif gend == "F":
         gender_label.config(text="Female")
     else:
         gender_label.config(text="Undefined")
@@ -106,15 +107,20 @@ def gender_test(filename):
     # # predict
     # result = model_for_gender.predict(features)[0]
 
-    model_for_gender = pickle.load(open("result/Gender/mlp_classifier_1.model", "rb"))
+    model_for_gender = pickle.load(open("result/Gender/mlp_classifier(ds_file).model", "rb"))
     # extract features and reshape it
     features = None
-    frequency = get_frequencies(filename)
-    if len(frequency) >= 0:
-        nobs, mean, skew, kurtosis, median, mode, std, low, peak, q25, q75, iqr = get_features(frequency)
-        # predict
-        result = model_for_gender.predict([[nobs, mean, skew, kurtosis, median, mode, std, low, peak, q25, q75, iqr]])[0]
-    else: result = "Undefined"
+    # frequency = get_frequencies(filename)
+    # if len(frequency) >= 0:
+    #     nobs, mean, skew, kurtosis, median, mode, std, low, peak, q25, q75, iqr = get_features(frequency)
+    #     # predict
+    #     result = model_for_gender.predict([[nobs, mean, skew, kurtosis, median, mode, std, low, peak, q25, q75, iqr]])[0]
+    # else: result = "Undefined"
+
+    features = extract_feature(filename, mfcc=True, chroma=True, mel=True).reshape(1, -1)
+    # predict
+    result = model_for_gender.predict(features)[0]
+
     # show the result !
     print("result:", result)
     cng_gender(result)
@@ -132,7 +138,13 @@ def stop():
     filename = "Recordings/audio.wav"
     os.system(f"ffmpeg -i {src} -ac 1 -ar 16000 {filename}")
     os.remove(src)
-    filename = "Recordings/3.wav"
+
+    # ##Normalize
+    # rawsound = AudioSegment.from_file(filename, "wav")
+    # filename = effects.normalize(rawsound)
+    # filename.export(filename, format="wav")
+
+    filename = "Recordings/test/M_disgust.wav"
     emotion_test(filename)
     gender_test(filename)
 
@@ -140,11 +152,5 @@ def stop():
 btn = tk.Button(root, text="Record", command=lambda:start(), font="Raleway", bg="#20bebe", fg="white", height=2, width=15)
 btn.grid(column=0, row=3, pady=50)
 
-
-# def test(label, btn_text):
-#     # btn_text.set("Loading..!")
-#     emotion = ts.data()
-#     self.cng_emotion(emotion)
-#     label.config(text=emotion)
 
 root.mainloop()
