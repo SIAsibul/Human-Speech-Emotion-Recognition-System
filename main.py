@@ -5,10 +5,12 @@ import tkinter as tk
 import PIL
 from PIL import Image, ImageTk
 from tkinter import *
+from tkinter import filedialog
 import subprocess
 import numpy  # Make sure NumPy is loaded before it is used in the callback
 assert numpy  # avoid "imported but unused" message (W0611)
 from helper import *
+from playsound import playsound
 from pydub import AudioSegment, effects
 
 root = tk.Tk()
@@ -30,22 +32,7 @@ emotion_label.grid(column=0, row=1)
 
 # Gender
 gender_label = tk.Label(root, text="Gender", font="Raleway")
-gender_label.grid(column="0", row="2")
-
-pid = None
-
-
-def start():
-    btn["command"] = stop
-    btn["text"] = "Stop"
-    btn["bg"] = "red"
-
-    fl = "Recordings/audio.wav"
-    os.remove(fl)
-    global pid
-    p = subprocess.Popen(["python3", "rec.py"])
-    pid = p.pid
-    #p.wait()
+gender_label.grid(column=0, row=2)
 
 
 def cng_emotion(emo):
@@ -125,10 +112,25 @@ def gender_test(filename):
     print("result:", result)
     cng_gender(result)
 
+pid = None
+
+
+def start():
+    btn["command"] = stop
+    btn["image"] = btn_logo_stop
+
+    fl = "Recordings/audio.wav"
+    if fl:
+        os.remove(fl)
+    global pid
+    p = subprocess.Popen(["python3", "rec.py"])
+    pid = p.pid
+    #p.wait()
+
+
 def stop():
     btn["command"] = start
-    btn["text"] = "Record"
-    btn["bg"] = "#20bebe"
+    btn["image"] = btn_logo_rec
 
     global pid
     if pid is not None:
@@ -136,21 +138,47 @@ def stop():
         pid = None
     src = "Recordings/rec.wav"
     filename = "Recordings/audio.wav"
-    os.system(f"ffmpeg -i {src} -ac 1 -ar 16000 {filename}")
-    os.remove(src)
+    if src and filename:
+        os.system(f"ffmpeg -i {src} -ac 1 -ar 16000 {filename}")
+    if src:
+        os.remove(src)
 
     # ##Normalize
     # rawsound = AudioSegment.from_file(filename, "wav")
     # filename = effects.normalize(rawsound)
     # filename.export(filename, format="wav")
-
-    filename = "Recordings/test/M_disgust.wav"
+    playsound(filename)
     emotion_test(filename)
     gender_test(filename)
 
+
+def browseFiles():
+    filename = filedialog.askopenfilename(initialdir="/home/siasibul/PycharmProjects/Human-Speech-Emotion-Recognition-System/Recordings/test/", title="Select a File", filetypes=(("wav files", "*.wav"), ("all files", "*.*")))
+    playsound(filename)
+    emotion_test(filename)
+    gender_test(filename)
+
+
 # button
-btn = tk.Button(root, text="Record", command=lambda:start(), font="Raleway", bg="#20bebe", fg="white", height=2, width=15)
-btn.grid(column=0, row=3, pady=50)
+btn_logo_rec = PIL.Image.open("Img/btn_record.png")
+btn_logo_rec = btn_logo_rec.resize((50, 50))
+btn_logo_rec = ImageTk.PhotoImage(btn_logo_rec)
+
+btn_logo_stop = PIL.Image.open("Img/btn_stop.png")
+btn_logo_stop = btn_logo_stop.resize((50, 50))
+btn_logo_stop = ImageTk.PhotoImage(btn_logo_stop)
+
+btn_upload_logo = PIL.Image.open("Img/btn_upload.png")
+btn_upload_logo = btn_upload_logo.resize((50, 50))
+btn_upload_logo = ImageTk.PhotoImage(btn_upload_logo)
+
+
+btn_frame = tk.Frame(root)
+btn_frame.grid(column=0, row=3, columnspan=2, rowspan=1, padx=50, pady=50)
+btn = tk.Button(btn_frame, image=btn_logo_rec, borderwidth=0, border=0, command=lambda:start())
+btn.grid(column=0, row=0, padx=10, pady=10)
+file_btn = tk.Button(btn_frame, image=btn_upload_logo, borderwidth=0, border=0, command=browseFiles)
+file_btn.grid(column=1, row=0, padx=10, pady=10)
 
 
 root.mainloop()
