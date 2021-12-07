@@ -9,30 +9,8 @@ from sklearn.metrics import accuracy_score
 import os
 import pickle
 
-# we allow only these emotions
-AVAILABLE_EMOTIONS = {
-    "ANGRY",
-    "DISGUST",
-    "FEAR",
-    "SAD",
-    "NEUTRAL",
-    "SURPRISE",
-    "HAPPY"
-}
-
 
 def extract_feature(file_name, **kwargs):
-    """
-    Extract feature from audio file `file_name`
-        Features supported:
-            - MFCC (mfcc)
-            - Chroma (chroma)
-            - MEL Spectrogram Frequency (mel)
-            - Contrast (contrast)
-            - Tonnetz (tonnetz)
-        e.g:
-        `features = extract_feature(path, mel=True, mfcc=True)`
-    """
     mfcc = kwargs.get("mfcc")
     chroma = kwargs.get("chroma")
     mel = kwargs.get("mel")
