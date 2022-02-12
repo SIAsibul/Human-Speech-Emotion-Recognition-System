@@ -112,3 +112,9 @@ if not os.path.isdir("result"):
     os.mkdir("result")
 
 pickle.dump(model, open("result/Emotion/mlp_classifier.model", "wb"))
+pickle.dump(X_train, open("result/Emotion/X_train.variable", "wb"))
+pickle.dump(X_test, open("result/Emotion/X_test.variable", "wb"))
+pickle.dump(y_train, open("result/Emotion/y_train.variable", "wb"))
+pickle.dump(y_test, open("result/Emotion/y_test.variable", "wb"))
+pickle.dump(y_pred, open("result/Emotion/y_pred.variable", "wb"))
+

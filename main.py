@@ -27,11 +27,11 @@ emotion_icon_label.image = emotion_icon
 emotion_icon_label.grid(column=0, row=0, padx=5, pady=50)
 
 # Emotion
-emotion_label = tk.Label(root, text="Emotion", font="Raleway")
+emotion_label = tk.Label(root, text=" ", font="Raleway")
 emotion_label.grid(column=0, row=1)
 
 # Gender
-gender_label = tk.Label(root, text="Gender", font="Raleway")
+gender_label = tk.Label(root, text=" ", font="Raleway")
 gender_label.grid(column=0, row=2)
 
 
@@ -88,22 +88,9 @@ def cng_gender(gend):
 
 
 def gender_test(filename):
-    # model_for_gender = pickle.load(open("result/Gender/mlp_classifier.model", "rb"))
-    # # extract features and reshape it
-    # features = extract_feature(filename, mfcc=True, chroma=True, mel=True).reshape(1, -1)
-    # # predict
-    # result = model_for_gender.predict(features)[0]
-
     model_for_gender = pickle.load(open("result/Gender/mlp_classifier(ds_file).model", "rb"))
     # extract features and reshape it
     features = None
-    # frequency = get_frequencies(filename)
-    # if len(frequency) >= 0:
-    #     nobs, mean, skew, kurtosis, median, mode, std, low, peak, q25, q75, iqr = get_features(frequency)
-    #     # predict
-    #     result = model_for_gender.predict([[nobs, mean, skew, kurtosis, median, mode, std, low, peak, q25, q75, iqr]])[0]
-    # else: result = "Undefined"
-
     features = extract_feature(filename, mfcc=True, chroma=True, mel=True).reshape(1, -1)
     # predict
     result = model_for_gender.predict(features)[0]
