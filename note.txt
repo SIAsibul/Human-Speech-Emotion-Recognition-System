@@ -2,3 +2,5 @@ Installing tkinter: sudo apt-get install python3-tk
 Installing ImageTk: sudo apt-get install python3-pil python3-pil.imagetk
 Installing PIL: pip install Pillow
 Installing soundfile: sudo apt-get install libportaudio2
+
+fkdglldlgkkgldg
